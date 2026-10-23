@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive"><meta name="referrer" content="no-referrer">
+<title>Portfolio admin</title><link rel="stylesheet" href="admin.css"></head>
+<body>
+<section id="login" class="card narrow" hidden>
+  <h1>Analytics admin</h1>
+  <form id="loginForm"><label>Email<input type="email" id="email" autocomplete="username" required></label>
+    <label>Password<input type="password" id="pw" autocomplete="current-password" required></label>
+    <button type="submit">Sign in</button> <button type="button" id="forgot" class="ghost">Forgot password</button></form>
+  <p id="loginMsg" class="msg"></p>
+</section>
+<section id="setpw" class="card narrow" hidden>
+  <h1>Set your password</h1>
+  <form id="setForm"><label>New password (min 10 chars)<input type="password" id="pw1" minlength="10" autocomplete="new-password" required></label>
+    <label>Repeat<input type="password" id="pw2" minlength="10" autocomplete="new-password" required></label><button type="submit">Save password</button></form>
+  <p id="setMsg" class="msg"></p>
+</section>
+<main id="dash" hidden>
+  <header><h1>Portfolio admin</h1><div><span id="active" class="live" title="Sessions with activity in the last 5 minutes">● 0 active now</span> <span id="who"></span> <button id="refresh" class="ghost">Refresh</button> <button id="logout" class="ghost">Sign out</button></div></header>
+  <nav class="tabs"><button data-tab="analytics" class="on">📊 Analytics</button><button data-tab="controls">🎛 Site &amp; world controls</button><button data-tab="data">🗄 Data</button></nav>
+  <section id="tab-analytics">
+  <div class="filters card">
+    <div class="ranges" id="ranges"><button data-r="today">Today</button><button data-r="7">Past 7 days</button><button data-r="30" class="on">Past 30 days</button><button data-r="all">All time</button><button data-r="custom">Custom</button></div>
+    <label class="custom">From <input type="date" id="from"></label><label class="custom">To <input type="date" id="to"></label>
+    <label>Source <select id="fsrc"><option value="">All</option></select></label>
+    <label>Search <input id="fq" placeholder="country, city, page, utm, avatar…"></label>
+    <label class="chk"><input type="checkbox" id="ftest"> include test rows</label>
+  </div>
+  <div class="kpis" id="kpis"></div>
+  <div class="grid">
+    <div class="card wide"><div class="row"><h2>Sessions over time</h2><small class="legend"><i class="sw a"></i>all sessions <i class="sw l"></i>LinkedIn <i class="sw v"></i>unique visitors</small></div><div class="chartbox"><canvas id="chart"></canvas><div id="tip" class="tip" hidden></div></div></div>
+    <div class="card"><h2>Sources</h2><div id="sources"></div></div>
+    <div class="card"><h2>Referrer domains</h2><div id="refdom"></div></div>
+    <div class="card"><h2>UTM campaigns</h2><div id="utm"></div></div>
+    <div class="card"><h2>Top pages</h2><div id="pages"></div></div>
+    <div class="card"><h2>New vs returning</h2><div id="newret"></div></div>
+    <div class="card"><h2>Countries</h2><div id="countries"></div></div>
+    <div class="card"><h2>Devices</h2><div id="devices"></div></div>
+    <div class="card"><h2>Browsers</h2><div id="browsers"></div></div>
+    <div class="card"><h2>Operating systems</h2><div id="oses"></div></div>
+    <div class="card wide"><h2>When people visit (PKT, sessions by weekday × hour)</h2><div id="heat" class="heat"></div></div>
+    <div class="card"><h2>3D world engagement</h2><div id="world"></div></div>
+    <div class="card"><h2>World zones visited</h2><div id="zones"></div></div>
+    <div class="card"><h2>Most opened projects</h2><div id="projs"></div></div>
+    <div class="card"><h2>Most opened companies</h2><div id="comps"></div></div>
+    <div class="card"><h2>Home sections seen</h2><div id="secs"></div></div>
+    <div class="card"><h2>Avatar names</h2><div id="avatars" class="chips"></div></div>
+  </div>
+  <div class="card"><div class="row"><h2>Recent sessions</h2><div><button id="csv">Export CSV</button></div></div>
+    <div class="tablewrap"><table id="tbl"><thead><tr><th>Time (PKT)</th><th>Source</th><th>Referrer / UTM</th><th>Landing</th><th>Pages · sections</th><th>Time on site</th><th>Device</th><th>Location</th><th>Avatar</th></tr></thead><tbody></tbody></table></div></div>
+  </section>
+  <section id="tab-controls" hidden>
+   <form id="cfgForm">
+    <div class="grid">
+     <div class="card"><h2>Landing page · hero</h2>
+      <label>Hero badge text<input id="c_badge" maxlength="140" placeholder="Lead Unity Developer at Userwise · open to lead and senior roles"></label>
+      <label>Hero headline / tagline<textarea id="c_headline" maxlength="400" rows="3" placeholder="(default tagline)"></textarea></label>
+      <label class="chk"><input type="checkbox" id="c_open"> Show the “open to work” badge</label>
+      <label>Announcement banner (empty = hidden)<input id="c_announce" maxlength="200"></label>
+      <label class="chk"><input type="checkbox" id="c_fab"> Show floating “Step into my Island” button</label></div>
+     <div class="card"><h2>Contact</h2>
+      <label>Contact email<input id="c_email" type="email" maxlength="120" placeholder="zakriya.amir98@gmail.com"></label>
+      <label>LinkedIn URL<input id="c_li" type="url" maxlength="200" placeholder="https://www.linkedin.com/in/…"></label>
+      <label>GitHub URL<input id="c_gh" type="url" maxlength="200" placeholder="https://github.com/…"></label>
+      <h2>Sections (uncheck to hide)</h2><div id="c_sections" class="checks"></div></div>
+     <div class="card"><h2>3D world</h2>
+      <label>Default time of day (0–24, empty = 16.5)<input id="w_hour" type="number" min="0" max="24" step=".5"></label>
+      <label class="chk"><input type="checkbox" id="w_fx"> Bloom / glow effects</label>
+      <label class="chk"><input type="checkbox" id="w_particles"> Particles (petals, dust, fireflies, sparkles)</label>
+      <label>Character speed multiplier <output id="w_speed_o">1.0×</output><input id="w_speed" type="range" min=".5" max="2" step=".1" value="1"></label>
+      <label>Welcome message (empty = default)<textarea id="w_welcome" maxlength="500" rows="3"></textarea></label>
+      <label class="chk"><input type="checkbox" id="w_avatar"> Ask for an avatar name</label><label class="chk"><input type="checkbox" id="w_music"> Background music on by default</label>
+      <label class="chk danger"><input type="checkbox" id="w_maint"> Maintenance mode (closes the world)</label>
+      <label>Maintenance message<input id="w_maint_msg" maxlength="200"></label></div>
+     <div class="card wide"><h2>Projects — order, featured, hidden</h2><p class="hintx">Featured projects float to the top with a highlight. Use ↑ ↓ to set the order.</p><div class="tablewrap"><table id="projTbl"><thead><tr><th>#</th><th>Project</th><th>Group</th><th>Featured</th><th>Hidden</th><th>Order</th><th></th></tr></thead><tbody></tbody></table></div></div>
+     <div class="card wide"><h2>Add a project</h2><p class="hintx">Appears on the home page and as a billboard in the 3D world's Projects District, inside its group's booth (a new group gets a new booth). Image: an https URL (must allow cross-origin loading for the 3D billboard, otherwise an initials tile is shown) or a repo path like assets/img/projects/x.webp. Press <b>Save</b> below to publish.</p>
+      <div class="addp"><label>Name*<input id="np_t" maxlength="80"></label><label>Group / section*<input id="np_group" maxlength="40" list="np_groups" placeholder="e.g. PeopleFun or a new group"><datalist id="np_groups"></datalist></label>
+      <label>Type<select id="np_kind"><option>Game / App</option><option>Web playable</option></select></label><label>Role<input id="np_role" maxlength="60" placeholder="e.g. Lead Unity Developer"></label>
+      <label class="w2">Description<textarea id="np_d" maxlength="1200" rows="3"></textarea></label><label class="w2">Image URL<input id="np_img" maxlength="400" placeholder="https://… or assets/img/projects/…"></label>
+      <label class="w2">Links (one per line: Label | https://…)<textarea id="np_links" rows="2" placeholder="Google Play | https://play.google.com/…"></textarea></label><label class="w2">Tech (comma separated)<input id="np_tech" maxlength="300"></label>
+      <button type="button" id="np_add">Add project</button> <span class="msg" id="np_msg"></span></div></div>
+    </div>
+    <div class="savebar"><button type="submit">Save &amp; publish live</button> <button type="button" id="cfgReset" class="ghost">Reset all to defaults</button> <span id="cfgMsg" class="msg"></span></div>
+   </form>
+  </section>
+  <section id="tab-data" hidden>
+   <div class="card narrowish"><h2>Delete visits in a date range</h2>
+    <div class="filters"><label>From (PKT)<input type="datetime-local" id="d_from"></label><label>To (PKT)<input type="datetime-local" id="d_to"></label><label class="chk"><input type="checkbox" id="d_testonly"> only test rows</label></div>
+    <p><button id="d_count" class="ghost">Count rows</button> <button id="d_del" class="dangerbtn">Delete rows in range</button> <span id="d_msg" class="msg"></span></p></div>
+   <div class="card narrowish"><h2>Quick actions</h2><p><button id="deltest" class="ghost">Delete all test rows</button> <button id="csvAll">Export all visits (raw rows) CSV</button> <span id="q_msg" class="msg"></span></p></div>
+  </section>
+</main>
+<script src="../js/analytics-config.js"></script><script src="../js/data.js"></script>
+<script src="admin.js"></script>
+</body></html>
